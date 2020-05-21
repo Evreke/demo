@@ -14,4 +14,8 @@ data class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
     val createdAt: LocalDateTime = LocalDateTime.now()
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    var role: Role? = null
 }
