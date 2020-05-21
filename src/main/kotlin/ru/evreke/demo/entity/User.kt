@@ -18,4 +18,8 @@ data class User(
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     var role: Role? = null
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    var category: Category? = null
 }
