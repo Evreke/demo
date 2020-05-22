@@ -2,7 +2,6 @@ package ru.evreke.demo.controllers.api.v1
 
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.MovieSession
-import ru.evreke.demo.entity.MovieSessionDto
 import ru.evreke.demo.exceptions.NotFoundException
 import ru.evreke.demo.repository.MovieRepository
 import ru.evreke.demo.repository.MovieSessionRepository
@@ -16,13 +15,6 @@ class MovieSessionApi(
     @GetMapping("/", "")
     fun getAllSessions(): MutableIterable<MovieSession> {
         return repo.findAll()
-    }
-
-    @GetMapping("/history")
-    fun getAllUserSessions(
-        @RequestParam userId: Long
-    ): List<MovieSessionDto> {
-        return repo.findSessionsForUser(userId)
     }
 
     @PostMapping("/", "")
