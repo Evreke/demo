@@ -1,6 +1,7 @@
 package ru.evreke.demo.entity
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import java.time.LocalDate
 import java.time.LocalTime
 import javax.persistence.*
 
@@ -10,7 +11,9 @@ data class MovieSession(
     @JsonFormat(pattern = "HH:mm")
     var startedAt: LocalTime,
     @JsonFormat(pattern = "HH:mm")
-    var endedAt: LocalTime
+    var endedAt: LocalTime,
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    var date: LocalDate
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +22,7 @@ data class MovieSession(
     @ManyToOne
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     var movie: Movie? = null
+
+    @ManyToMany(mappedBy = "sessions")
+    var users: MutableList<User> = mutableListOf()
 }

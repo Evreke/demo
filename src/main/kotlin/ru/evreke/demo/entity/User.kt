@@ -22,4 +22,12 @@ data class User(
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     var category: Category? = null
+
+    @ManyToMany
+    @JoinTable(
+        name = "users_movie_sessions",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "movie_session_id")]
+    )
+    var sessions: MutableList<MovieSession> = mutableListOf()
 }
