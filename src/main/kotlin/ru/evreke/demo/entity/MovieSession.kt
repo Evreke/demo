@@ -22,7 +22,4 @@ data class MovieSession(
     @ManyToOne
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     var movie: Movie? = null
-
-    @ManyToMany(mappedBy = "sessions")
-    var users: MutableList<User> = mutableListOf()
 }

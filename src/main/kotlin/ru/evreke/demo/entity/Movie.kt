@@ -1,6 +1,5 @@
 package ru.evreke.demo.entity
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalTime
 import javax.persistence.*
@@ -15,8 +14,4 @@ data class Movie(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
-
-    @JsonBackReference
-    @OneToMany(mappedBy = "movie")
-    var sessions: List<MovieSession>? = null
 }

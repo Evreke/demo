@@ -11,7 +11,4 @@ data class Category(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
-
-    @OneToMany(mappedBy = "category")
-    var user: List<User>? = null
 }

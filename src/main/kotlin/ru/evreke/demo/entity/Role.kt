@@ -10,7 +10,4 @@ data class Role(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
-
-    @OneToMany(mappedBy = "role")
-    var user: List<User>? = null
 }
