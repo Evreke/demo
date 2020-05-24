@@ -14,9 +14,10 @@ class UserApi(
 ) {
     @GetMapping("/{id}/bookings")
     fun getAllUserBookings(
-        @PathVariable id: Long
+        @PathVariable id: Long,
+        @RequestParam(required = false, defaultValue = "false") payed: Boolean
     ): List<Booking> {
-        return bookingRepo.findAllByUserId(id)
+        return bookingRepo.findAllByUserIdAndPayedIs(id, payed)
     }
 
     @GetMapping("/{id}/movie-sessions")
