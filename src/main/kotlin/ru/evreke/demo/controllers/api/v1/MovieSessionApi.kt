@@ -29,12 +29,14 @@ class MovieSessionApi(
     @PutMapping("/{id}")
     fun editSession(
         @PathVariable id: Long,
+        @RequestParam movieId: Long,
         @RequestBody session: MovieSession
     ) {
+        val newMovie = movieRepo.findById(movieId).orElseThrow { NotFoundException("Movie with id=$movieId not found") }
         repo.findById(id).orElseThrow { NotFoundException("Session with id=$id not found") }.apply {
-            startedAt = session.startedAt
-            endedAt = session.endedAt
-            movie = session.movie
+            session.startedAt?.let { startedAt = it }
+            session.endedAt?.let { endedAt = it }
+            session.movie?.let { movie = newMovie }
         }
     }
 

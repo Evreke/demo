@@ -9,11 +9,11 @@ import javax.persistence.*
 @Table(name = "movie_sessions")
 data class MovieSession(
     @JsonFormat(pattern = "HH:mm")
-    var startedAt: LocalTime,
+    var startedAt: LocalTime?,
     @JsonFormat(pattern = "HH:mm")
-    var endedAt: LocalTime,
+    var endedAt: LocalTime?,
     @JsonFormat(pattern = "dd/MM/yyyy")
-    var date: LocalDate
+    var date: LocalDate?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

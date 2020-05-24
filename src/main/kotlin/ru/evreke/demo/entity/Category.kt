@@ -5,8 +5,8 @@ import javax.persistence.*
 @Entity
 @Table(name = "categories")
 data class Category(
-    var title: String,
-    var discount: Double
+    var title: String?,
+    var discount: Double?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

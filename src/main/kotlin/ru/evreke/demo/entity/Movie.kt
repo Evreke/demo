@@ -7,9 +7,9 @@ import javax.persistence.*
 @Entity
 @Table(name = "movies")
 data class Movie(
-    var title: String,
+    var title: String?,
     @JsonFormat(pattern = "HH:mm")
-    var duration: LocalTime
+    var duration: LocalTime?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

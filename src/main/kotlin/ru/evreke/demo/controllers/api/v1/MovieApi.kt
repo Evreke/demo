@@ -34,12 +34,11 @@ class MovieApi(
         @PathVariable id: Long,
         @RequestBody movie: Movie
     ) {
-        repo.save(
-            repo.findById(id).orElseThrow { NotFoundException("Movie with id=$id not found") }.also {
-                it.duration = movie.duration
-                it.title = movie.title
-            }
-        )
+        repo.findById(id).orElseThrow { NotFoundException("Movie with id=$id not found") }.apply {
+            movie.duration?.let { duration = it }
+            movie.title?.let { title = it }
+            repo.save(this)
+        }
     }
 
     @DeleteMapping("/{id}")
