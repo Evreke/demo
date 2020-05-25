@@ -3,11 +3,13 @@ package ru.evreke.demo.controllers.api.v1
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.Booking
 import ru.evreke.demo.exceptions.AlreadyPayedException
+import ru.evreke.demo.exceptions.BookingException
 import ru.evreke.demo.exceptions.NotFoundException
 import ru.evreke.demo.repository.BookingRepository
 import ru.evreke.demo.repository.MovieSessionRepository
 import ru.evreke.demo.repository.UserRepository
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/api/v1/bookings")
@@ -26,19 +28,23 @@ class BookingApi(
         @RequestParam movieSessionId: Long,
         @RequestParam userId: Long
     ) {
-        val movieSession = movieSessionRepo.findById(movieSessionId).orElseThrow { NotFoundException("Movie session with id=$movieSessionId not found") }.also {
-            it.booked++
-        }
+        val movieSession = movieSessionRepo.findById(movieSessionId).orElseThrow { NotFoundException("Movie session with id=$movieSessionId not found") }
         val user = userRepo.findById(userId).orElseThrow { NotFoundException("User with id=$userId not found") }
-        repo.save(Booking().also {
-            it.session = movieSession
-            it.user = user
-            it.totalPrice = if (user.category!!.discount == BigDecimal.ZERO) {
-                movieSession.price
-            } else {
-                movieSession.price?.discount(user.category?.discount)
-            }
-        })
+        val privilegedUser = user.category?.discount != BigDecimal.ZERO
+        val saleToEveryone = movieSession.startSellingAt!! <= LocalDateTime.now()
+        if (!movieSession.privileged || saleToEveryone || privilegedUser) {
+            repo.save(Booking().also {
+                it.session = movieSession.apply { booked++ }
+                it.user = user
+                it.totalPrice = if (user.category?.discount == BigDecimal.ZERO) {
+                    movieSession.price
+                } else {
+                    movieSession.price?.discount(user.category?.discount)
+                }
+            })
+        } else {
+            throw BookingException("Tickets sale will start at ${movieSession.startSellingAt}")
+        }
     }
 
     @PutMapping("/{id}/pay")
