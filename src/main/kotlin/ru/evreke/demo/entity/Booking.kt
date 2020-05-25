@@ -7,7 +7,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "bookings")
 data class Booking(
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
     var payed: Boolean = false
 ) {
     @Id
