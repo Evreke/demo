@@ -1,6 +1,7 @@
 package ru.evreke.demo.entity
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.persistence.*
@@ -29,4 +30,5 @@ data class MovieSession(
     var occupancy: Int = 0
     var booked: Int = 0
     var privileged: Boolean = true
+    var price: BigDecimal? = BigDecimal.ZERO
 }

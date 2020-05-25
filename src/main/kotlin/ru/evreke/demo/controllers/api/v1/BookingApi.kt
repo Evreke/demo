@@ -7,6 +7,7 @@ import ru.evreke.demo.exceptions.NotFoundException
 import ru.evreke.demo.repository.BookingRepository
 import ru.evreke.demo.repository.MovieSessionRepository
 import ru.evreke.demo.repository.UserRepository
+import java.math.BigDecimal
 
 @RestController
 @RequestMapping("/api/v1/bookings")
@@ -32,6 +33,11 @@ class BookingApi(
         repo.save(Booking().also {
             it.session = movieSession
             it.user = user
+            it.totalPrice = if (user.category!!.discount == BigDecimal.ZERO) {
+                movieSession.price
+            } else {
+                movieSession.price?.discount(user.category?.discount)
+            }
         })
     }
 
@@ -65,4 +71,8 @@ class BookingApi(
             userId?.let { repo.deleteBookingByUserIdAndId(userId, id) } ?: repo.deleteById(id)
         }
     }
+}
+
+fun BigDecimal.discount(discount: BigDecimal?): BigDecimal? {
+    return this.minus(this.multiply(discount))
 }

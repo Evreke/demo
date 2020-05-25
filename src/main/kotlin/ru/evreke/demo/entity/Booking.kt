@@ -1,6 +1,7 @@
 package ru.evreke.demo.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -22,4 +23,5 @@ data class Booking(
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     var user: User? = null
+    var totalPrice : BigDecimal? = BigDecimal.ZERO
 }
