@@ -28,4 +28,5 @@ data class MovieSession(
     var hall: Hall? = null
     var occupancy: Int = 0
     var booked: Int = 0
+    var privileged: Boolean = true
 }

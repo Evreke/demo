@@ -46,10 +46,20 @@ class MovieSessionApi(
         repo.findById(id).orElseThrow { NotFoundException("Session with id=$id not found") }.apply {
             session.startedAt?.let { startedAt = it }
             session.endedAt?.let { endedAt = it }
-            session.occupancy?.let { occupancy = it }
             newMovie?.let { movie = it }
             newHall?.let { hall = it }
             repo.save(this)
+        }
+    }
+
+    @PutMapping("/{id}/privilege")
+    fun setPrivilege(
+        @PathVariable id: Long,
+        @RequestParam privileged: Boolean
+    ) {
+        repo.findById(id).orElseThrow { NotFoundException("Session with id=$id not found") }.also {
+            it.privileged = privileged
+            repo.save(it)
         }
     }
 
