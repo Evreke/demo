@@ -26,5 +26,6 @@ data class MovieSession(
     @OneToOne
     @JoinColumn(name = "hall_id", referencedColumnName = "id")
     var hall: Hall? = null
-    var occupancy: Int? = 0
+    var occupancy: Int = 0
+    var booked: Int = 0
 }
