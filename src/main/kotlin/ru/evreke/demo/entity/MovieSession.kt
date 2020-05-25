@@ -22,4 +22,9 @@ data class MovieSession(
     @ManyToOne
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     var movie: Movie? = null
+
+    @OneToOne
+    @JoinColumn(name = "hall_id", referencedColumnName = "id")
+    var hall: Hall? = null
+    var occupancy: Int? = 0
 }

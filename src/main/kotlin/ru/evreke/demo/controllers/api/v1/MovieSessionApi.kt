@@ -3,6 +3,7 @@ package ru.evreke.demo.controllers.api.v1
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.MovieSession
 import ru.evreke.demo.exceptions.NotFoundException
+import ru.evreke.demo.repository.HallRepository
 import ru.evreke.demo.repository.MovieRepository
 import ru.evreke.demo.repository.MovieSessionRepository
 
@@ -10,7 +11,8 @@ import ru.evreke.demo.repository.MovieSessionRepository
 @RequestMapping("/api/v1/movie-sessions")
 class MovieSessionApi(
     private val repo: MovieSessionRepository,
-    private val movieRepo: MovieRepository
+    private val movieRepo: MovieRepository,
+    private val hallRepo: HallRepository
 ) {
     @GetMapping("/", "")
     fun getAllSessions(): MutableIterable<MovieSession> {
@@ -20,23 +22,34 @@ class MovieSessionApi(
     @PostMapping("/", "")
     fun createSession(
         @RequestParam movieId: Long,
+        @RequestParam hallId: Long,
         @RequestBody session: MovieSession
     ) {
         val movie = movieRepo.findById(movieId).orElseThrow { NotFoundException("Movie with id=$movieId not found") }
-        repo.save(session.also { it.movie = movie })
+        val hall = hallRepo.findById(movieId).orElseThrow { NotFoundException("Hall with id=$hallId not found") }
+        session.also {
+            it.movie = movie
+            it.hall = hall
+            repo.save(it)
+        }
     }
 
     @PutMapping("/{id}")
     fun editSession(
         @PathVariable id: Long,
-        @RequestParam movieId: Long,
+        @RequestParam(required = false) movieId: Long?,
+        @RequestParam(required = false) hallId: Long?,
         @RequestBody session: MovieSession
     ) {
-        val newMovie = movieRepo.findById(movieId).orElseThrow { NotFoundException("Movie with id=$movieId not found") }
+        val newMovie = movieId?.let { movieRepo.findById(it).orElseThrow { NotFoundException("Movie with id=$it not found") } }
+        val newHall = hallId?.let { hallRepo.findById(it).orElseThrow { NotFoundException("Hall with id=$hallId not found") } }
         repo.findById(id).orElseThrow { NotFoundException("Session with id=$id not found") }.apply {
             session.startedAt?.let { startedAt = it }
             session.endedAt?.let { endedAt = it }
-            session.movie?.let { movie = newMovie }
+            session.occupancy?.let { occupancy = it }
+            newMovie?.let { movie = it }
+            newHall?.let { hall = it }
+            repo.save(this)
         }
     }
 
