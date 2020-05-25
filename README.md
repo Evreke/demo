@@ -25,8 +25,26 @@
 * [/api/v1/movie-sessions](/api/v1/movie-sessions) - работа с сеансами
 * [/api/v1/users](/api/v1/users) - получение истории посещения сеансов и брони пользователя
 
+### Пример работы на тестовых данных
+POST http://localhost:8080/api/v1/movie-sessions?movieId=3&hallId=2 - созда
+Content-type: application/json
+
+
+POST http://localhost:8080/api/v1/bookings?movieSessionId=1&userId=2 - забронирует место на сеанс для пользователя Петя на киносеанс в зелёном зале на фильм From Dusk Till Dawn
+
+PUT http://localhost:8080/api/v1/bookings/1/pay - вызывается когда бронь оплачена. Резерв снимается, количество мест в зале уменьшается на 1. Сеанс для которого бронь оплачена попадет в выборку истории посещённых сеансов пользователя.
+
+POST http://localhost:8080/api/v1/movie-sessions?movieId=3&hallId=2 
+Content-Type: application/json
+{
+  "startedAt": "21:00",
+  "endedAt": "22:30",
+  "date": "25/05/2020"
+}
+Создаст новый киносеанс на 25 мая 2020 года, начало сеанса в 21:00 и окончание в 22:30 в VIP зал, на фильм Афоня. После этого можно бронировать места.
+
 ### Что не реализовано
 
-1. Стоимость билетов
-2. Места в кинозале
-3. Задача максимизации прибыли (work in progress)
+* Места в кинозале
+* Задача максимизации прибыли (work in progress)
+* Проверка на возможность брони
