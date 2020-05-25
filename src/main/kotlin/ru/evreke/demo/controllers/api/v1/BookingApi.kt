@@ -35,7 +35,7 @@ class BookingApi(
         })
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/pay")
     fun setPayed(
         @PathVariable id: Long
     ) {
