@@ -2,25 +2,16 @@ package ru.evreke.demo.controllers.api.v1
 
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.Booking
-import ru.evreke.demo.exceptions.AlreadyPayedException
-import ru.evreke.demo.exceptions.BookingException
-import ru.evreke.demo.exceptions.NotFoundException
-import ru.evreke.demo.repository.BookingRepository
-import ru.evreke.demo.repository.MovieSessionRepository
-import ru.evreke.demo.repository.UserRepository
-import java.math.BigDecimal
-import java.time.LocalDateTime
+import ru.evreke.demo.services.interfaces.BookingService
 
 @RestController
 @RequestMapping("/api/v1/bookings")
 class BookingApi(
-    private val repo: BookingRepository,
-    private val userRepo: UserRepository,
-    private val movieSessionRepo: MovieSessionRepository
+    private val bookingService: BookingService
 ) {
     @GetMapping("/", "")
     fun getAllBookings(): MutableIterable<Booking> {
-        return repo.findAll()
+        return bookingService.getAllBookings()
     }
 
     @PostMapping("/", "")
@@ -28,40 +19,14 @@ class BookingApi(
         @RequestParam movieSessionId: Long,
         @RequestParam userId: Long
     ) {
-        val movieSession = movieSessionRepo.findById(movieSessionId).orElseThrow { NotFoundException("Movie session with id=$movieSessionId not found") }
-        val user = userRepo.findById(userId).orElseThrow { NotFoundException("User with id=$userId not found") }
-        val privilegedUser = user.category?.discount != BigDecimal.ZERO
-        val saleToEveryone = movieSession.startSellingAt!! <= LocalDateTime.now()
-        if (!movieSession.privileged || saleToEveryone || privilegedUser) {
-            repo.save(Booking().also {
-                it.session = movieSession.apply { booked++ }
-                it.user = user
-                it.totalPrice = if (user.category?.discount == BigDecimal.ZERO) {
-                    movieSession.price
-                } else {
-                    movieSession.price?.discount(user.category?.discount)
-                }
-            })
-        } else {
-            throw BookingException("Tickets sale will start at ${movieSession.startSellingAt}")
-        }
+        bookingService.createBooking(movieSessionId, userId)
     }
 
     @PutMapping("/{id}/pay")
     fun setPayed(
         @PathVariable id: Long
     ) {
-        val booking = repo.findById(id).orElseThrow { NotFoundException("Booking with id=$id not found") }
-        if (booking.payed) {
-            throw AlreadyPayedException("Booking with id=$id was already payed")
-        } else {
-            booking.apply {
-                payed = !payed
-                session!!.booked--
-                session!!.occupancy++
-            }
-            repo.save(booking)
-        }
+        bookingService.payBooking(id)
     }
 
     @DeleteMapping("/{id}")
@@ -69,16 +34,6 @@ class BookingApi(
         @RequestParam(required = false) userId: Long?,
         @PathVariable id: Long
     ) {
-        val booking = repo.findById(id).orElseThrow { NotFoundException("Booking with id=$id not found") }
-        if (booking.payed) {
-            throw AlreadyPayedException("Booking with id=$id was payed. You shouldn't delete it!")
-        } else {
-            movieSessionRepo.save(booking.session!!.also { it.booked-- })
-            userId?.let { repo.deleteBookingByUserIdAndId(userId, id) } ?: repo.deleteById(id)
-        }
+        bookingService.deleteBooking(id, userId)
     }
-}
-
-fun BigDecimal.discount(discount: BigDecimal?): BigDecimal? {
-    return this.minus(this.multiply(discount))
 }

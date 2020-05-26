@@ -1,5 +1,6 @@
 package ru.evreke.demo.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -7,9 +8,10 @@ import javax.persistence.*
 @Entity
 @Table(name = "movie_sessions")
 data class MovieSession(
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     var startedAt: LocalDateTime?,
-    var endedAt: LocalDateTime?,
-    var startSellingAt: LocalDateTime?
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    var endedAt: LocalDateTime?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,7 @@ data class MovieSession(
     var booked: Int = 0
     var privileged: Boolean = true
     var price: BigDecimal? = BigDecimal.ZERO
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    var startSellingAt: LocalDateTime = LocalDateTime.MIN
 }

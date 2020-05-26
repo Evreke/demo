@@ -2,31 +2,30 @@ package ru.evreke.demo.controllers.api.v1
 
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.Hall
-import ru.evreke.demo.exceptions.NotFoundException
-import ru.evreke.demo.repository.HallRepository
+import ru.evreke.demo.services.interfaces.HallService
 
 @RestController
 @RequestMapping("/api/v1/halls")
 class HallApi(
-    private val repo: HallRepository
+    private val hallService: HallService
 ) {
     @GetMapping("/", "")
     fun getAllHalls(): MutableIterable<Hall> {
-        return repo.findAll()
+        return hallService.getAllHalls()
     }
 
     @GetMapping("/{id}")
     fun getHall(
         @PathVariable id: Long
-    ): Hall? {
-        return repo.findById(id).orElseThrow { NotFoundException("Hall with id=$id not found") }
+    ): Hall {
+        return hallService.getHall(id)
     }
 
     @PostMapping("/", "")
     fun createHall(
         @RequestBody hall: Hall
     ) {
-        repo.save(hall)
+        hallService.createHall(hall)
     }
 
     @PutMapping("/{id}")
@@ -34,18 +33,14 @@ class HallApi(
         @PathVariable id: Long,
         @RequestBody hall: Hall
     ) {
-        repo.findById(id).orElseThrow { NotFoundException("Hall with id=$id not found") }.apply {
-            hall.capacity?.let { capacity = it }
-            hall.name?.let { name = it }
-            repo.save(this)
-        }
+        hallService.updateHall(id, hall)
     }
 
     @DeleteMapping("/{id}")
     fun deleteHall(
         @PathVariable id: Long
     ) {
-        repo.deleteById(id)
+        hallService.deleteHall(id)
     }
 
 }

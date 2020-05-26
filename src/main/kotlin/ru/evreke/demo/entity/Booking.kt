@@ -9,19 +9,18 @@ import javax.persistence.*
 @Table(name = "bookings")
 data class Booking(
     var createdAt: LocalDateTime? = LocalDateTime.now(),
-    var payed: Boolean = false
+    var payed: Boolean = false,
+    @ManyToOne
+    @JoinColumn(name = "movie_session_id", nullable = false)
+    var session: MovieSession
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    @ManyToOne
-    @JoinColumn(name = "movie_session_id", nullable = false)
-    var session: MovieSession? = null
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     var user: User? = null
-    var totalPrice : BigDecimal? = BigDecimal.ZERO
+    var totalPrice: BigDecimal? = BigDecimal.ZERO
 }

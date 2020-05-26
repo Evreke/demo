@@ -2,24 +2,23 @@ package ru.evreke.demo.controllers.api.v1
 
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.Category
-import ru.evreke.demo.exceptions.NotFoundException
-import ru.evreke.demo.repository.CategoryRepository
+import ru.evreke.demo.services.interfaces.CategoryService
 
 @RestController
 @RequestMapping("/api/v1/categories")
 class CategoryApi(
-    private val repo: CategoryRepository
+    private val categoryService: CategoryService
 ) {
     @GetMapping("/", "")
     fun getAllCategories(): MutableIterable<Category> {
-        return repo.findAll()
+        return categoryService.getAllCategories()
     }
 
     @PostMapping("/", "")
     fun createCategory(
         @RequestBody category: Category
     ) {
-        repo.save(category)
+        categoryService.createCategory(category)
     }
 
     @PutMapping("/{id}", "")
@@ -27,17 +26,13 @@ class CategoryApi(
         @PathVariable id: Long,
         @RequestBody category: Category
     ) {
-        repo.findById(id).orElseThrow { NotFoundException("Category with id=$id not found") }.apply {
-            category.discount?.let { discount = it }
-            category.title?.let { title = it }
-            repo.save(this)
-        }
+        categoryService.updateCategory(id, category)
     }
 
     @DeleteMapping("/{id}")
     fun deleteCategory(
         @PathVariable id: Long
     ) {
-        repo.deleteById(id)
+        categoryService.deleteCategory(id)
     }
 }

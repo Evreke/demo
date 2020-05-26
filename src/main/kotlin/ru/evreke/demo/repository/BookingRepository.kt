@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Transactional
 import ru.evreke.demo.entity.Booking
 
 interface BookingRepository : CrudRepository<Booking, Long> {
-    fun findAllByUserIdAndPayedIs(id: Long, payed: Boolean): List<Booking>
+    fun findAllByUserIdAndPayedIs(id: Long, payed: Boolean): MutableIterable<Booking>
 
     @Transactional
-    fun deleteBookingByUserIdAndId(userId: Long, bookingId: Long)
+    fun deleteBookingByIdAndUserId(userId: Long, bookingId: Long)
 }
