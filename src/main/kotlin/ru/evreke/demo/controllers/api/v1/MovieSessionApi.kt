@@ -2,12 +2,17 @@ package ru.evreke.demo.controllers.api.v1
 
 import org.springframework.web.bind.annotation.*
 import ru.evreke.demo.entity.MovieSession
+import ru.evreke.demo.services.interfaces.HallService
+import ru.evreke.demo.services.interfaces.MovieService
 import ru.evreke.demo.services.interfaces.MovieSessionService
+import ru.evreke.demo.services.interfaces.UserService
 
 @RestController
 @RequestMapping("/api/v1/movie-sessions")
 class MovieSessionApi(
-    private val movieSessionService: MovieSessionService
+    private val movieSessionService: MovieSessionService,
+    private val movieService: MovieService,
+    private val hallService: HallService
 ) {
     @GetMapping("/", "")
     fun getAllSessions(): MutableIterable<MovieSession> {
@@ -20,7 +25,9 @@ class MovieSessionApi(
         @RequestParam hallId: Long,
         @RequestBody session: MovieSession
     ) {
-        movieSessionService.createMovieSession(session, movieId, hallId)
+        val movie = movieService.getMovie(movieId)
+        val hall = hallService.getHall(hallId)
+        movieSessionService.createMovieSession(session, movie, hall)
     }
 
     @PutMapping("/{id}")

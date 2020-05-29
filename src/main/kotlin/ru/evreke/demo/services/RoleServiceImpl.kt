@@ -10,8 +10,8 @@ import ru.evreke.demo.repository.RoleRepository
 class RoleServiceImpl(
     private val repo: RoleRepository
 ) : RoleService {
-    override fun createRole(role: Role) {
-        repo.save(role)
+    override fun createRole(role: Role): Role {
+        return repo.save(role)
     }
 
     override fun getRole(id: Long): Role {

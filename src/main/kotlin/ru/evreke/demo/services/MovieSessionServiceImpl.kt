@@ -2,6 +2,8 @@ package ru.evreke.demo.services
 
 import javassist.NotFoundException
 import org.springframework.stereotype.Service
+import ru.evreke.demo.entity.Hall
+import ru.evreke.demo.entity.Movie
 import ru.evreke.demo.entity.MovieSession
 import ru.evreke.demo.repository.MovieSessionRepository
 import ru.evreke.demo.services.interfaces.HallService
@@ -14,15 +16,11 @@ class MovieSessionServiceImpl(
     private val movieService: MovieService,
     private val hallService: HallService
 ) : MovieSessionService {
-    override fun createMovieSession(
-        movieSession: MovieSession,
-        movieId: Long,
-        hallId: Long
-    ) {
-        repo.save(
+    override fun createMovieSession(movieSession: MovieSession, movie: Movie, hall: Hall): MovieSession {
+        return repo.save(
             movieSession.also {
-                it.movie = movieService.getMovie(movieId)
-                it.hall = hallService.getHall(hallId)
+                it.movie = movie
+                it.hall = hall
             }
         )
     }

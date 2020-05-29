@@ -10,8 +10,8 @@ import ru.evreke.demo.repository.MovieRepository
 class MovieServiceImpl(
     private val repo: MovieRepository
 ) : MovieService {
-    override fun createMovie(movie: Movie) {
-        repo.save(movie)
+    override fun createMovie(movie: Movie): Movie {
+        return repo.save(movie)
     }
 
     override fun getMovie(id: Long): Movie {

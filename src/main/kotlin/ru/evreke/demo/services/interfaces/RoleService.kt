@@ -3,7 +3,7 @@ package ru.evreke.demo.services.interfaces
 import ru.evreke.demo.entity.Role
 
 interface RoleService {
-    fun createRole(role: Role)
+    fun createRole(role: Role): Role
     fun getRole(id: Long): Role
     fun getAllRoles(): MutableIterable<Role>
     fun deleteRole(id: Long)

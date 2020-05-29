@@ -10,8 +10,8 @@ import ru.evreke.demo.repository.CategoryRepository
 class CategoryServiceImpl(
     private val repo: CategoryRepository
 ) : CategoryService {
-    override fun createCategory(category: Category) {
-        repo.save(category)
+    override fun createCategory(category: Category): Category {
+        return repo.save(category)
     }
 
     override fun getCategory(id: Long): Category {

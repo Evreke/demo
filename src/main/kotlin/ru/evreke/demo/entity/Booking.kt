@@ -10,7 +10,7 @@ import javax.persistence.*
 data class Booking(
     var createdAt: LocalDateTime? = LocalDateTime.now(),
     var payed: Boolean = false,
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinColumn(name = "movie_session_id", nullable = false)
     var session: MovieSession
 ) {
@@ -19,7 +19,7 @@ data class Booking(
     val id: Long? = null
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "user_id", nullable = false)
     var user: User? = null
     var totalPrice: BigDecimal? = BigDecimal.ZERO

@@ -10,25 +10,22 @@ import ru.evreke.demo.exceptions.NotFoundException
 import ru.evreke.demo.repository.BookingRepository
 import ru.evreke.demo.services.interfaces.BookingService
 import ru.evreke.demo.services.interfaces.MovieSessionService
-import ru.evreke.demo.services.interfaces.UserService
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Service
 class BookingServiceImpl(
     private val repo: BookingRepository,
-    private val userService: UserService,
     private val movieSessionService: MovieSessionService
 ) : BookingService {
-    override fun createBooking(movieSessionId: Long, userId: Long) {
-        val movieSession = movieSessionService.getMovieSession(movieSessionId)
-        val user = userService.getUser(userId)
+    @Throws(BookingException::class)
+    override fun createBooking(movieSession: MovieSession, user: User): Booking {
         val isUserPrivileged = user.category?.discount != BigDecimal.ZERO
         val saleToEveryone = movieSession.startSellingAt <= LocalDateTime.now()
         if (!movieSession.privileged || saleToEveryone || isUserPrivileged) {
-            repo.save(
+            return repo.save(
                 Booking(session = movieSession).also {
-                    it.session = movieSession.apply { booked++ }
+                    it.session.booked++
                     it.user = user
                     it.totalPrice = evaluateTotalPrice(user, movieSession)
                 }
@@ -75,7 +72,7 @@ class BookingServiceImpl(
         return repo.findAllByUserIdAndPayedIs(userId, isPayed)
     }
 
-    private fun evaluateTotalPrice(user: User, movieSession: MovieSession): BigDecimal? {
+    fun evaluateTotalPrice(user: User, movieSession: MovieSession): BigDecimal? {
         return if (user.category?.discount == BigDecimal.ZERO) {
             movieSession.price
         } else {

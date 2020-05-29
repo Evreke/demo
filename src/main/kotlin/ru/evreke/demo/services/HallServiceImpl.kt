@@ -10,8 +10,8 @@ import ru.evreke.demo.repository.HallRepository
 class HallServiceImpl(
     private val repo: HallRepository
 ) : HallService {
-    override fun createHall(hall: Hall) {
-        repo.save(hall)
+    override fun createHall(hall: Hall): Hall {
+        return repo.save(hall)
     }
 
     override fun getHall(id: Long): Hall {
