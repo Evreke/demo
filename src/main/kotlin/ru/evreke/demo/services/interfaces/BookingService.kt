@@ -8,7 +8,7 @@ interface BookingService {
     fun createBooking(movieSession: MovieSession, user: User): Booking
     fun getBooking(id: Long): Booking
     fun getAllBookings(): MutableIterable<Booking>
-    fun deleteBooking(id: Long, userId: Long?)
-    fun payBooking(id: Long)
-    fun getUserBookings(userId: Long, isPayed: Boolean): MutableIterable<Booking>
+    fun deleteBooking(booking: Booking, user: User?)
+    fun payBooking(booking: Booking) : Booking
+    fun getUserBookings(user: User, isPayed: Boolean): MutableIterable<Booking>
 }

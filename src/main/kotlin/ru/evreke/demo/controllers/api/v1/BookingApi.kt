@@ -32,7 +32,7 @@ class BookingApi(
     fun setPayed(
         @PathVariable id: Long
     ) {
-        bookingService.payBooking(id)
+        bookingService.payBooking(bookingService.getBooking(id))
     }
 
     @DeleteMapping("/{id}")
@@ -40,6 +40,9 @@ class BookingApi(
         @RequestParam(required = false) userId: Long?,
         @PathVariable id: Long
     ) {
-        bookingService.deleteBooking(id, userId)
+        bookingService.deleteBooking(
+            bookingService.getBooking(id),
+            userId?.let { userService.getUser(userId) }
+        )
     }
 }

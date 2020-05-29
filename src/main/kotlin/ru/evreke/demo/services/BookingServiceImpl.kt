@@ -43,22 +43,20 @@ class BookingServiceImpl(
         return repo.findAll()
     }
 
-    override fun deleteBooking(id: Long, userId: Long?) {
-        val booking = getBooking(id)
+    override fun deleteBooking(booking: Booking, user: User?) {
         if (booking.payed) {
-            throw AlreadyPayedException("Booking with id=$id was payed. You shouldn't delete it!")
+            throw AlreadyPayedException("Booking with id=${booking.id} was payed. You shouldn't delete it!")
         } else {
             movieSessionService.updateMovieSession(booking.session.also { it.booked-- })
-            userId?.let { repo.deleteBookingByIdAndUserId(userId, id) } ?: repo.deleteById(id)
+            user?.let { repo.deleteByBookingAndUser(user, booking) } ?: repo.delete(booking)
         }
     }
 
-    override fun payBooking(id: Long) {
-        val booking = getBooking(id)
+    override fun payBooking(booking: Booking): Booking {
         if (booking.payed) {
-            throw AlreadyPayedException("Booking with id=$id was already payed")
+            throw AlreadyPayedException("Booking with id=${booking.id} was already payed")
         } else {
-            repo.save(
+            return repo.save(
                 booking.apply {
                     payed = !payed
                     session.booked--
@@ -68,8 +66,8 @@ class BookingServiceImpl(
         }
     }
 
-    override fun getUserBookings(userId: Long, isPayed: Boolean): MutableIterable<Booking> {
-        return repo.findAllByUserIdAndPayedIs(userId, isPayed)
+    override fun getUserBookings(user: User, isPayed: Boolean): MutableIterable<Booking> {
+        return repo.findAllByUserAndPayedIs(user, isPayed)
     }
 
     fun evaluateTotalPrice(user: User, movieSession: MovieSession): BigDecimal? {
