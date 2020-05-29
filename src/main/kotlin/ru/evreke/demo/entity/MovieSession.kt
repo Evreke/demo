@@ -17,11 +17,11 @@ data class MovieSession(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    @ManyToOne(cascade = [CascadeType.PERSIST])
+    @ManyToOne
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     var movie: Movie? = null
 
-    @OneToOne(cascade = [CascadeType.PERSIST])
+    @OneToOne
     @JoinColumn(name = "hall_id", referencedColumnName = "id")
     var hall: Hall? = null
     var occupancy: Int = 0

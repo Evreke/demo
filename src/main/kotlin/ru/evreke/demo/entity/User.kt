@@ -19,7 +19,7 @@ data class User(
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     var role: Role? = null
 
-    @ManyToOne(cascade = [CascadeType.PERSIST])
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     var category: Category? = null
 
